@@ -3,6 +3,7 @@ import App from './App'
 import AuthPage from './pages/AuthPage'
 import HomePage from './pages/HomePage'
 import SettingPage from './pages/SettingPage'
+import { useServersStore } from './stores/servers'
 
 const rootRoute = createRootRoute({ component: App })
 
@@ -10,7 +11,7 @@ const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   beforeLoad: () => {
-    throw redirect({ to: '/home' })
+    throw redirect({ to: useServersStore.getState().currentServerUrl ? '/home' : '/auth' })
   },
 })
 

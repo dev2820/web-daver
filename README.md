@@ -4,6 +4,8 @@
 
 TanStack Router로 `/auth`, `/home`, `/setting` 경로를 구성했습니다. `/`로 접속하면 `/home`으로 이동합니다.
 
+서버 목록은 Zustand로 관리하며, `{ name, url }` 배열과 현재 선택한 서버의 URL을 브라우저의 `localStorage`에 저장합니다. 로그인 화면에서 서버를 저장하거나 선택할 수 있으며, 같은 URL은 중복 저장하지 않습니다.
+
 ## 실행
 
 Node.js 22.12 이상과 pnpm 9가 필요합니다.
