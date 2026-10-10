@@ -13,10 +13,7 @@ export function Backdrop({
 }: ComponentProps<typeof ArkDrawer.Backdrop>) {
   return (
     <ArkDrawer.Backdrop
-      className={cn(
-        "fixed z-60 bg-black/35 data-[state=open]:animate-drawer-backdrop-in data-[state=closed]:animate-drawer-backdrop-out data-swiping:animate-none! motion-reduce:animate-none!",
-        className,
-      )}
+      className={cn("fixed z-60 bg-black/35", className)}
       {...props}
     />
   );
@@ -41,7 +38,7 @@ export function Content({
   return (
     <ArkDrawer.Content
       className={cn(
-        "flex h-full w-[min(85vw,20rem)] flex-col bg-white shadow-xl outline-none data-[state=open]:animate-drawer-in data-[state=closed]:animate-drawer-out data-swiping:animate-none! motion-reduce:animate-none!",
+        "flex h-full w-[min(85vw,20rem)] flex-col bg-white shadow-xl outline-none",
         className,
       )}
       {...props}
