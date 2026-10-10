@@ -1,15 +1,17 @@
-import { queryOptions, useQuery } from '@tanstack/react-query'
-import { apiClient, toServerRelativePath } from '@/lib/api-client'
+import { useMemo } from "react";
+import { micromark } from "micromark";
+import { useRawContent, useSuspenseRawContent } from "@/features/raw-content";
 
-const markdownQueries = {
-  content: (url: string) => queryOptions({
-    queryKey: ['editor', 'markdown', url] as const,
-    queryFn: ({ signal }) => apiClient.get(toServerRelativePath(url), { signal, retry: 0 }).text(),
-    staleTime: 60_000,
-    retry: false,
-  }),
+export function useMarkdownContent(url: string) {
+  const { data: rawContent } = useRawContent(url);
+  const data = useMemo(() => micromark(rawContent ?? ""), [rawContent]);
+
+  return { data };
 }
 
-export function useMarkdownContent(url: string, enabled: boolean) {
-  return useQuery({ ...markdownQueries.content(url), enabled })
+export function useSuspenseMarkdownContent(url: string) {
+  const { data: rawContent } = useSuspenseRawContent(url);
+  const data = useMemo(() => micromark(rawContent), [rawContent]);
+
+  return { data };
 }

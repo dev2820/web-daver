@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Tabs } from "@ark-ui/react/tabs";
 import { X } from "lucide-react";
-import { useMarkdownContent } from "@/features/markdown-content";
+import { Panel } from "./panel";
 
 export type EditorPanel = {
   url: string;
@@ -14,29 +14,6 @@ type EditorProps = {
   onSelectPanel: (url: string) => void;
   onClosePanel: (url: string) => void;
 };
-
-function MarkdownContent({ url, active }: { url: string; active: boolean }) {
-  const { data, isPending, isError } = useMarkdownContent(url, active);
-
-  if (isPending)
-    return (
-      <p role="status" className="p-6 text-sm text-zinc-500">
-        파일을 불러오는 중...
-      </p>
-    );
-  if (isError)
-    return (
-      <p role="alert" className="p-6 text-sm text-red-600">
-        파일을 불러오지 못했습니다.
-      </p>
-    );
-
-  return (
-    <pre className="min-h-full whitespace-pre-wrap wrap-break-words p-6 font-mono text-sm leading-6 text-zinc-900">
-      {data}
-    </pre>
-  );
-}
 
 export function Editor({
   panels,
@@ -70,6 +47,8 @@ export function Editor({
     <Tabs.Root
       value={activePanelUrl ?? ""}
       onValueChange={({ value }) => onSelectPanel(value)}
+      lazyMount
+      unmountOnExit
       className="flex h-full min-w-0 flex-col bg-white"
     >
       <Tabs.List
@@ -107,14 +86,7 @@ export function Editor({
           value={panel.url}
           className="min-h-0 flex-1 overflow-auto"
         >
-          {/\.(md|mdx|markdown)$/i.test(new URL(panel.url).pathname) ? (
-            <MarkdownContent
-              url={panel.url}
-              active={activePanelUrl === panel.url}
-            />
-          ) : (
-            <div className="h-full" />
-          )}
+          <Panel panel={panel} />
         </Tabs.Content>
       ))}
     </Tabs.Root>

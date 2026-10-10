@@ -3,7 +3,7 @@ import type { SubmitEvent } from "react";
 import { Badge, Button, Card, inputVariants } from "@/components/ui";
 import { useServersStore } from "@/stores/servers";
 
-function SettingPage() {
+export default function SettingPage() {
   const servers = useServersStore((state) => state.servers);
   const addServer = useServersStore((state) => state.addServer);
   const removeServer = useServersStore((state) => state.removeServer);
@@ -67,7 +67,10 @@ function SettingPage() {
                 required
                 placeholder="예: 개발 서버"
                 onInput={(event) => event.currentTarget.setCustomValidity("")}
-                className={inputVariants({ size: "natural", className: "mt-1.5" })}
+                className={inputVariants({
+                  size: "natural",
+                  className: "mt-1.5",
+                })}
               />
             </div>
             <div>
@@ -84,7 +87,10 @@ function SettingPage() {
                 required
                 placeholder="https://example.com"
                 onInput={(event) => event.currentTarget.setCustomValidity("")}
-                className={inputVariants({ size: "natural", className: "mt-1.5" })}
+                className={inputVariants({
+                  size: "natural",
+                  className: "mt-1.5",
+                })}
               />
             </div>
             <Button type="submit" className="justify-self-start">
@@ -131,5 +137,3 @@ function SettingPage() {
     </main>
   );
 }
-
-export default SettingPage;

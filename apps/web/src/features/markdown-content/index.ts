@@ -1,1 +1,4 @@
-export { useMarkdownContent } from './use-markdown-content'
+export {
+  useMarkdownContent,
+  useSuspenseMarkdownContent,
+} from "./use-markdown-content";

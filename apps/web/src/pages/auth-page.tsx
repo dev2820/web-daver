@@ -78,7 +78,10 @@ function ServerConnectDialog() {
               >
                 {(field) => (
                   <div className="grid gap-2">
-                    <label htmlFor="server-name" className="text-sm font-medium text-zinc-700">
+                    <label
+                      htmlFor="server-name"
+                      className="text-sm font-medium text-zinc-700"
+                    >
                       이름
                     </label>
                     <input
@@ -89,13 +92,22 @@ function ServerConnectDialog() {
                       placeholder="서버 이름"
                       value={field.state.value}
                       onBlur={field.handleBlur}
-                      onChange={(event) => field.handleChange(event.target.value)}
+                      onChange={(event) =>
+                        field.handleChange(event.target.value)
+                      }
                       aria-invalid={!field.state.meta.isValid || undefined}
-                      aria-describedby={!field.state.meta.isValid ? "server-name-error" : undefined}
+                      aria-describedby={
+                        !field.state.meta.isValid
+                          ? "server-name-error"
+                          : undefined
+                      }
                       className={inputVariants({ size: "lg" })}
                     />
                     {!field.state.meta.isValid && (
-                      <p id="server-name-error" className="text-sm text-red-600">
+                      <p
+                        id="server-name-error"
+                        className="text-sm text-red-600"
+                      >
                         {field.state.meta.errors.join(", ")}
                       </p>
                     )}
@@ -109,7 +121,8 @@ function ServerConnectDialog() {
                   onSubmit: ({ value }) => {
                     try {
                       const url = new URL(value.trim());
-                      return url.protocol === "http:" || url.protocol === "https:"
+                      return url.protocol === "http:" ||
+                        url.protocol === "https:"
                         ? undefined
                         : "http 또는 https 주소를 입력하세요.";
                     } catch {
@@ -120,7 +133,10 @@ function ServerConnectDialog() {
               >
                 {(field) => (
                   <div className="grid gap-2">
-                    <label htmlFor="server-url" className="text-sm font-medium text-zinc-700">
+                    <label
+                      htmlFor="server-url"
+                      className="text-sm font-medium text-zinc-700"
+                    >
                       주소
                     </label>
                     <input
@@ -131,9 +147,15 @@ function ServerConnectDialog() {
                       placeholder="https://example.com"
                       value={field.state.value}
                       onBlur={field.handleBlur}
-                      onChange={(event) => field.handleChange(event.target.value)}
+                      onChange={(event) =>
+                        field.handleChange(event.target.value)
+                      }
                       aria-invalid={!field.state.meta.isValid || undefined}
-                      aria-describedby={!field.state.meta.isValid ? "server-url-error" : undefined}
+                      aria-describedby={
+                        !field.state.meta.isValid
+                          ? "server-url-error"
+                          : undefined
+                      }
                       className={inputVariants({ size: "lg" })}
                     />
                     {!field.state.meta.isValid && (
@@ -156,7 +178,7 @@ function ServerConnectDialog() {
   );
 }
 
-function AuthPage() {
+export default function AuthPage() {
   const navigate = useNavigate({ from: "/auth" });
   const servers = useServersStore((state) => state.servers);
   const setCurrentServer = useServersStore((state) => state.setCurrentServer);
@@ -195,5 +217,3 @@ function AuthPage() {
     </main>
   );
 }
-
-export default AuthPage;
