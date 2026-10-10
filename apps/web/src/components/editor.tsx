@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Tabs } from "@ark-ui/react/tabs";
 import { X } from "lucide-react";
-import { useMarkdownContent } from "@/features/editor";
+import { useMarkdownContent } from "@/features/markdown-content";
 
 export type EditorPanel = {
   url: string;

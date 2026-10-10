@@ -4,11 +4,8 @@ import { Portal } from "@ark-ui/react/portal";
 import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Plus, Server, X } from "lucide-react";
-import { Button } from "@/components/ui";
+import { Button, inputVariants } from "@/components/ui";
 import { useServersStore } from "@/stores/servers";
-
-const inputClassName =
-  "block h-control-lg w-full rounded-lg border border-zinc-300 bg-white px-3 text-base text-zinc-950 placeholder:text-zinc-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 aria-invalid:border-red-500";
 
 function ServerConnectDialog() {
   const [open, setOpen] = useState(false);
@@ -95,7 +92,7 @@ function ServerConnectDialog() {
                       onChange={(event) => field.handleChange(event.target.value)}
                       aria-invalid={!field.state.meta.isValid || undefined}
                       aria-describedby={!field.state.meta.isValid ? "server-name-error" : undefined}
-                      className={inputClassName}
+                      className={inputVariants({ size: "lg" })}
                     />
                     {!field.state.meta.isValid && (
                       <p id="server-name-error" className="text-sm text-red-600">
@@ -137,7 +134,7 @@ function ServerConnectDialog() {
                       onChange={(event) => field.handleChange(event.target.value)}
                       aria-invalid={!field.state.meta.isValid || undefined}
                       aria-describedby={!field.state.meta.isValid ? "server-url-error" : undefined}
-                      className={inputClassName}
+                      className={inputVariants({ size: "lg" })}
                     />
                     {!field.state.meta.isValid && (
                       <p id="server-url-error" className="text-sm text-red-600">

@@ -1,10 +1,7 @@
 import type { SubmitEvent } from "react";
 
-import { Badge, Button, Card } from "@/components/ui";
+import { Badge, Button, Card, inputVariants } from "@/components/ui";
 import { useServersStore } from "@/stores/servers";
-
-const inputClassName =
-  "mt-1.5 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-base text-zinc-950 placeholder:text-zinc-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600";
 
 function SettingPage() {
   const servers = useServersStore((state) => state.servers);
@@ -70,7 +67,7 @@ function SettingPage() {
                 required
                 placeholder="예: 개발 서버"
                 onInput={(event) => event.currentTarget.setCustomValidity("")}
-                className={inputClassName}
+                className={inputVariants({ size: "natural", className: "mt-1.5" })}
               />
             </div>
             <div>
@@ -87,7 +84,7 @@ function SettingPage() {
                 required
                 placeholder="https://example.com"
                 onInput={(event) => event.currentTarget.setCustomValidity("")}
-                className={inputClassName}
+                className={inputVariants({ size: "natural", className: "mt-1.5" })}
               />
             </div>
             <Button type="submit" className="justify-self-start">
