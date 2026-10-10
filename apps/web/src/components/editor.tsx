@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, type MouseEvent } from "react";
 import { Tabs } from "@ark-ui/react/tabs";
 import { X } from "lucide-react";
 import { Panel } from "./panel";
@@ -23,7 +23,9 @@ export function Editor({
 }: EditorProps) {
   const tabListRef = useRef<HTMLDivElement>(null);
 
-  function closePanel(url: string) {
+  function handleClosePanel(e: MouseEvent<HTMLButtonElement>, url: string) {
+    e.preventDefault();
+
     const index = panels.findIndex((panel) => panel.url === url);
     const remaining = panels.filter((panel) => panel.url !== url);
     const focusUrl =
@@ -55,28 +57,29 @@ export function Editor({
         ref={tabListRef}
         tabIndex={-1}
         aria-label="열린 파일"
-        className="flex h-12 shrink-0 gap-1 overflow-x-auto border-b border-zinc-200 px-2"
+        className="flex h-8 shrink-0 overflow-x-auto border-b border-zinc-200 px-2"
       >
         {panels.map((panel) => (
           <div
             key={panel.url}
-            className="flex min-w-32 max-w-56 shrink-0 items-center"
+            data-active={activePanelUrl === panel.url}
+            className="flex h-full min-w-32 max-w-56 shrink-0 items-center border-b-2 border-transparent text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950 data-[active=true]:border-blue-600 data-[active=true]:text-zinc-950"
           >
             <Tabs.Trigger
               value={panel.url}
               title={panel.url}
-              className="h-full min-w-0 flex-1 cursor-pointer truncate border-b-2 border-transparent px-3 text-left text-sm text-zinc-500 hover:text-zinc-950 focus-visible:outline-2 focus-visible:outline-blue-600 aria-selected:border-blue-600 aria-selected:text-zinc-950"
+              className="relative h-full min-w-0 flex-1 cursor-pointer truncate pl-3 pr-1 text-left text-sm focus-visible:outline-2 focus-visible:outline-blue-600"
             >
               {panel.name}
+              <button
+                type="button"
+                aria-label={`${panel.name} 닫기`}
+                onClick={(e) => handleClosePanel(e, panel.url)}
+                className="absolute right-1 top-1/2 -translate-y-1/2 flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-sm text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-2 focus-visible:outline-blue-600"
+              >
+                <X size={10} aria-hidden="true" />
+              </button>
             </Tabs.Trigger>
-            <button
-              type="button"
-              aria-label={`${panel.name} 닫기`}
-              onClick={() => closePanel(panel.url)}
-              className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-2 focus-visible:outline-blue-600"
-            >
-              <X size={14} aria-hidden="true" />
-            </button>
           </div>
         ))}
       </Tabs.List>
@@ -84,7 +87,7 @@ export function Editor({
         <Tabs.Content
           key={panel.url}
           value={panel.url}
-          className="min-h-0 flex-1 overflow-auto"
+          className="min-h-0 flex-1 overflow-hidden"
         >
           <Panel panel={panel} />
         </Tabs.Content>

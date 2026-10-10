@@ -100,7 +100,7 @@ export function FileTree({
     loaded?.nodes === nodes ? loaded.collection : baseCollection;
 
   return (
-    <div className="h-full overflow-y-auto bg-white px-2 pb-4 pt-16">
+    <div className="h-full overflow-y-auto bg-white px-2 pb-4 pt-4">
       {isPending ? (
         <p role="status" className="px-2 text-sm text-zinc-500">
           파일을 불러오는 중...
