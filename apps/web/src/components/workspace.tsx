@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Splitter, useSplitter } from "@ark-ui/react/splitter";
 import { Editor, type EditorPanel } from "@/components/editor";
 import { FileTree } from "@/components/file-tree";
 import { SideMenu } from "@/components/side-menu";
+import { Splitter, useSplitter } from "@/components/ui";
 import type { FileTreeNode } from "@/features/file-tree";
 
 export function Workspace() {
@@ -55,20 +55,16 @@ export function Workspace() {
         }
       />
       <Splitter.RootProvider value={splitter} className="min-w-0 flex-1">
-        <Splitter.Panel id="file-tree" className="min-w-0">
-          <FileTree
-            activeFileUrl={activePanelUrl}
-            onOpenFile={openPanel}
-          />
+        <Splitter.Panel id="file-tree" className="pr-0.5">
+          <FileTree activeFileUrl={activePanelUrl} onOpenFile={openPanel} />
         </Splitter.Panel>
         <Splitter.ResizeTrigger
           id="file-tree:editor"
           aria-label="파일 트리 너비 조절"
-          className="group relative z-10 -mx-1.5 flex w-3 items-center justify-center bg-zinc-50 hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-blue-600"
         >
-          <Splitter.ResizeTriggerIndicator className="h-full w-px bg-zinc-200 group-hover:bg-blue-400 group-focus-visible:bg-blue-600" />
+          <Splitter.ResizeTriggerIndicator />
         </Splitter.ResizeTrigger>
-        <Splitter.Panel id="editor" className="min-w-0">
+        <Splitter.Panel id="editor">
           <Editor
             panels={panels}
             activePanelUrl={activePanelUrl}

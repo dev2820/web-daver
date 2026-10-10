@@ -1,4 +1,7 @@
 import Markdown, { defaultUrlTransform } from "react-markdown";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
+import "katex/dist/katex.min.css";
 import { useSuspenseRawContent } from "@/features/raw-content";
 import { markdownComponents } from "./markdown";
 import { withMarkdownComponents } from "./with-markdown-components";
@@ -12,9 +15,20 @@ export function MarkdownContent({ url }: { url: string }) {
   const previewContent = rawContent.replace(frontmatterPattern, "");
 
   return (
-    <div className="min-h-full p-6 text-sm leading-6 text-zinc-900">
-      <div className="max-w-170 w-full">
+    <div
+      style={{
+        minHeight: "100%",
+        padding: "1.5rem",
+        color: "#18181b",
+        fontSize: "1rem",
+        lineHeight: 1.6,
+        overflowWrap: "break-word",
+      }}
+    >
+      <div style={{ maxWidth: "70ch", width: "100%" }}>
         <RenderMarkdown
+          remarkPlugins={[remarkMath]}
+          rehypePlugins={[rehypeKatex]}
           urlTransform={(value, key, node) => {
             const safeUrl = defaultUrlTransform(value);
             if (key !== "src" || node.tagName !== "img" || !safeUrl) {

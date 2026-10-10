@@ -68,18 +68,18 @@ export function Editor({
             <Tabs.Trigger
               value={panel.url}
               title={panel.url}
-              className="relative h-full min-w-0 flex-1 cursor-pointer truncate pl-3 pr-1 text-left text-sm focus-visible:outline-2 focus-visible:outline-blue-600"
+              className="h-full min-w-0 flex-1 cursor-pointer truncate pl-3 pr-1 text-left text-sm focus-visible:outline-2 focus-visible:outline-blue-600"
             >
               {panel.name}
-              <button
-                type="button"
-                aria-label={`${panel.name} 닫기`}
-                onClick={(e) => handleClosePanel(e, panel.url)}
-                className="absolute right-1 top-1/2 -translate-y-1/2 flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-sm text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-2 focus-visible:outline-blue-600"
-              >
-                <X size={10} aria-hidden="true" />
-              </button>
             </Tabs.Trigger>
+            <button
+              type="button"
+              aria-label={`${panel.name} 닫기`}
+              onClick={(e) => handleClosePanel(e, panel.url)}
+              className="mr-1 flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-sm text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-2 focus-visible:outline-blue-600"
+            >
+              <X size={10} aria-hidden="true" />
+            </button>
           </div>
         ))}
       </Tabs.List>

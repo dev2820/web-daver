@@ -1,6 +1,6 @@
 import type { SubmitEvent } from "react";
 
-import { Badge, Button, Card, inputVariants } from "@/components/ui";
+import { Badge, Button, Card, Input } from "@/components/ui";
 import { useServersStore } from "@/stores/servers";
 
 export default function SettingPage() {
@@ -60,17 +60,15 @@ export default function SettingPage() {
               >
                 서버 이름
               </label>
-              <input
+              <Input
                 id="server-name"
                 name="name"
                 type="text"
                 required
                 placeholder="예: 개발 서버"
                 onInput={(event) => event.currentTarget.setCustomValidity("")}
-                className={inputVariants({
-                  size: "natural",
-                  className: "mt-1.5",
-                })}
+                controlSize="natural"
+                className="mt-1.5"
               />
             </div>
             <div>
@@ -80,17 +78,15 @@ export default function SettingPage() {
               >
                 URL
               </label>
-              <input
+              <Input
                 id="server-url"
                 name="url"
                 type="url"
                 required
                 placeholder="https://example.com"
                 onInput={(event) => event.currentTarget.setCustomValidity("")}
-                className={inputVariants({
-                  size: "natural",
-                  className: "mt-1.5",
-                })}
+                controlSize="natural"
+                className="mt-1.5"
               />
             </div>
             <Button type="submit" className="justify-self-start">

@@ -4,7 +4,7 @@ import { Portal } from "@ark-ui/react/portal";
 import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Plus, Server, X } from "lucide-react";
-import { Button, inputVariants } from "@/components/ui";
+import { Button, Input } from "@/components/ui";
 import { useServersStore } from "@/stores/servers";
 
 function ServerConnectDialog() {
@@ -84,7 +84,7 @@ function ServerConnectDialog() {
                     >
                       이름
                     </label>
-                    <input
+                    <Input
                       ref={nameInputRef}
                       id="server-name"
                       name={field.name}
@@ -101,7 +101,6 @@ function ServerConnectDialog() {
                           ? "server-name-error"
                           : undefined
                       }
-                      className={inputVariants({ size: "lg" })}
                     />
                     {!field.state.meta.isValid && (
                       <p
@@ -139,7 +138,7 @@ function ServerConnectDialog() {
                     >
                       주소
                     </label>
-                    <input
+                    <Input
                       ref={urlInputRef}
                       id="server-url"
                       name={field.name}
@@ -156,7 +155,6 @@ function ServerConnectDialog() {
                           ? "server-url-error"
                           : undefined
                       }
-                      className={inputVariants({ size: "lg" })}
                     />
                     {!field.state.meta.isValid && (
                       <p id="server-url-error" className="text-sm text-red-600">
