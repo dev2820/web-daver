@@ -1,44 +1,56 @@
-import { createRootRoute, createRoute, createRouter, redirect } from '@tanstack/react-router'
-import App from './App'
-import AuthPage from './pages/AuthPage'
-import HomePage from './pages/HomePage'
-import SettingPage from './pages/SettingPage'
-import { useServersStore } from './stores/servers'
+import {
+  createRootRoute,
+  createRoute,
+  createRouter,
+  redirect,
+} from "@tanstack/react-router";
+import App from "./App";
+import AuthPage from "./pages/auth-page";
+import HomePage from "./pages/home-page";
+import SettingPage from "./pages/setting-page";
+import { useServersStore } from "./stores/servers";
 
-const rootRoute = createRootRoute({ component: App })
+const rootRoute = createRootRoute({ component: App });
 
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/',
+  path: "/",
   beforeLoad: () => {
-    throw redirect({ to: useServersStore.getState().currentServerUrl ? '/home' : '/auth' })
+    throw redirect({
+      to: useServersStore.getState().currentServerUrl ? "/home" : "/auth",
+    });
   },
-})
+});
 
 const authRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: 'auth',
+  path: "auth",
   component: AuthPage,
-})
+});
 
 const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: 'home',
+  path: "home",
   component: HomePage,
-})
+});
 
 const settingRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: 'setting',
+  path: "setting",
   component: SettingPage,
-})
+});
 
-const routeTree = rootRoute.addChildren([indexRoute, authRoute, homeRoute, settingRoute])
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  authRoute,
+  homeRoute,
+  settingRoute,
+]);
 
-export const router = createRouter({ routeTree })
+export const router = createRouter({ routeTree });
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface Register {
-    router: typeof router
+    router: typeof router;
   }
 }
