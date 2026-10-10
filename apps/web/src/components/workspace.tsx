@@ -1,13 +1,35 @@
-import { useState } from "react";
-import { Editor, type EditorPanel } from "@/components/editor";
+import { useEffect, useState } from "react";
+import { Portal } from "@ark-ui/react/portal";
+import { XIcon } from "lucide-react";
+import { Editor } from "@/components/editor";
 import { FileTree } from "@/components/file-tree";
 import { SideMenu } from "@/components/side-menu";
-import { Splitter, useSplitter } from "@/components/ui";
-import type { FileTreeNode } from "@/features/file-tree";
+import { Drawer, Splitter, useSplitter } from "@/components/ui";
+import { toServerAbsoluteUrl } from "@/lib/api-client";
+import { useServersStore } from "@/stores/servers";
+import { useWorkspaceStore } from "@/stores/workspace";
 
 export function Workspace() {
-  const [panels, setPanels] = useState<EditorPanel[]>([]);
-  const [activePanelUrl, setActivePanelUrl] = useState<string | null>(null);
+  const panelsInUrl = useWorkspaceStore((state) => state.panels);
+  const activeInUrl = useWorkspaceStore((state) => state.active);
+  const treeOpen = useWorkspaceStore((state) => state.tree);
+  const openPanel = useWorkspaceStore((state) => state.openPanel);
+  const closePanel = useWorkspaceStore((state) => state.closePanel);
+  const selectPanel = useWorkspaceStore((state) => state.selectPanel);
+  const setPanelRaw = useWorkspaceStore((state) => state.setPanelRaw);
+  const setTreeOpen = useWorkspaceStore((state) => state.setTreeOpen);
+  const serverUrl = useServersStore((state) => state.currentServerUrl);
+  const [isDesktop, setIsDesktop] = useState(() =>
+    window.matchMedia("(min-width: 64rem)").matches,
+  );
+  const panels = serverUrl ? panelsInUrl : [];
+  const activePanelPath = panels.some((panel) => panel.path === activeInUrl)
+    ? activeInUrl
+    : (panels.at(-1)?.path ?? null);
+  const activeFileUrl = activePanelPath
+    ? toServerAbsoluteUrl(activePanelPath)
+    : null;
+
   const splitter = useSplitter({
     panels: [
       {
@@ -18,61 +40,114 @@ export function Workspace() {
       },
       { id: "editor", minSize: "120px" },
     ],
-    defaultSize: ["400px"],
+    defaultSize: [treeOpen === false ? "0px" : "400px"],
+    onCollapse: ({ panelId }) => {
+      if (panelId === "file-tree") {
+        setTreeOpen(false);
+      }
+    },
+    onExpand: ({ panelId }) => {
+      if (panelId === "file-tree") {
+        setTreeOpen(true);
+      }
+    },
   });
   const fileTreeCollapsed = splitter.isPanelCollapsed("file-tree");
 
-  function openPanel(file: FileTreeNode) {
-    setPanels((current) =>
-      current.some((panel) => panel.url === file.url)
-        ? current
-        : [...current, { url: file.url, name: file.label }],
-    );
-    setActivePanelUrl(file.url);
-  }
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 64rem)");
+    const updateDesktop = () => setIsDesktop(desktop.matches);
 
-  function closePanel(url: string) {
-    const index = panels.findIndex((panel) => panel.url === url);
-    if (index < 0) return;
+    desktop.addEventListener("change", updateDesktop);
+    return () => desktop.removeEventListener("change", updateDesktop);
+  }, []);
 
-    const remaining = panels.filter((panel) => panel.url !== url);
-    setPanels(remaining);
-    if (activePanelUrl === url) {
-      setActivePanelUrl(
-        remaining[Math.min(index, remaining.length - 1)]?.url ?? null,
-      );
+  useEffect(() => {
+    if (treeOpen === false && !fileTreeCollapsed) {
+      splitter.collapsePanel("file-tree");
+    } else if (treeOpen !== false && fileTreeCollapsed) {
+      splitter.expandPanel("file-tree");
     }
-  }
+  }, [treeOpen, fileTreeCollapsed, splitter]);
 
   return (
-    <div className="flex h-full min-w-0">
-      <SideMenu
-        selectedMenu={fileTreeCollapsed ? null : "file-tree"}
-        onSelectMenu={() =>
-          fileTreeCollapsed
-            ? splitter.expandPanel("file-tree")
-            : splitter.collapsePanel("file-tree")
-        }
-      />
-      <Splitter.RootProvider value={splitter} className="min-w-0 flex-1">
-        <Splitter.Panel id="file-tree" className="pr-0.5">
-          <FileTree activeFileUrl={activePanelUrl} onOpenFile={openPanel} />
-        </Splitter.Panel>
-        <Splitter.ResizeTrigger
-          id="file-tree:editor"
-          aria-label="파일 트리 너비 조절"
-        >
-          <Splitter.ResizeTriggerIndicator />
-        </Splitter.ResizeTrigger>
-        <Splitter.Panel id="editor">
-          <Editor
-            panels={panels}
-            activePanelUrl={activePanelUrl}
-            onSelectPanel={setActivePanelUrl}
-            onClosePanel={closePanel}
-          />
-        </Splitter.Panel>
-      </Splitter.RootProvider>
-    </div>
+    <Drawer.Root
+      open={treeOpen === true && !isDesktop}
+      onOpenChange={({ open }) => {
+        setTreeOpen(open);
+      }}
+      finalFocusEl={() =>
+        document.querySelector<HTMLElement>("[data-side-menu-trigger]")
+      }
+      swipeDirection="start"
+      lazyMount
+    >
+      <div className="flex h-full min-w-0">
+        <SideMenu
+          selectedMenu={fileTreeCollapsed ? null : "file-tree"}
+          onSelectMenu={() => {
+            setTreeOpen(fileTreeCollapsed);
+          }}
+        />
+        <Splitter.RootProvider value={splitter} className="min-w-0 flex-1">
+          <Splitter.Panel id="file-tree" className="hidden pr-0.5 lg:block">
+            <FileTree
+              activeFileUrl={activeFileUrl}
+              onOpenFile={(file) => openPanel(file, !isDesktop)}
+            />
+          </Splitter.Panel>
+          <Splitter.ResizeTrigger
+            id="file-tree:editor"
+            aria-label="파일 트리 너비 조절"
+            className={
+              treeOpen === false || fileTreeCollapsed ? "hidden" : "hidden lg:flex"
+            }
+          >
+            <Splitter.ResizeTriggerIndicator />
+          </Splitter.ResizeTrigger>
+          <Splitter.Panel id="editor">
+            <Editor
+              panels={panels}
+              activePanelPath={activePanelPath}
+              onSelectPanel={selectPanel}
+              onClosePanel={closePanel}
+              onRawChange={setPanelRaw}
+            />
+          </Splitter.Panel>
+        </Splitter.RootProvider>
+      </div>
+      <Portal>
+        <Drawer.Backdrop className="inset-0 lg:hidden" />
+        <Drawer.Positioner className="inset-0 lg:hidden">
+          <Drawer.Content className="w-[min(92vw,24rem)] flex-row pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+            <SideMenu
+              className="flex"
+              selectedMenu="file-tree"
+              onSelectMenu={() => setTreeOpen(false)}
+            />
+            <div className="flex min-w-0 flex-1 flex-col">
+              <div className="flex h-12 shrink-0 items-center justify-between border-b border-zinc-200 px-4">
+                <Drawer.Title className="text-base font-semibold text-zinc-950">
+                  파일 트리
+                </Drawer.Title>
+                <Drawer.CloseTrigger
+                  type="button"
+                  aria-label="사이드 메뉴 닫기"
+                  className="flex size-10 items-center justify-center rounded-lg text-zinc-600 focus-visible:outline-2 focus-visible:outline-blue-600"
+                >
+                  <XIcon size={20} aria-hidden="true" />
+                </Drawer.CloseTrigger>
+              </div>
+              <div className="min-h-0 flex-1">
+                <FileTree
+                  activeFileUrl={activeFileUrl}
+                  onOpenFile={(file) => openPanel(file, !isDesktop)}
+                />
+              </div>
+            </div>
+          </Drawer.Content>
+        </Drawer.Positioner>
+      </Portal>
+    </Drawer.Root>
   );
 }

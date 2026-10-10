@@ -1,19 +1,25 @@
-import { Files } from "lucide-react";
+import { FilesIcon } from "lucide-react";
 import { Tooltip } from "@/components/ui";
+import { cn } from "@/lib/utils";
 
 type SideMenuId = "file-tree";
 
 export function SideMenu({
   selectedMenu,
   onSelectMenu,
+  className,
 }: {
   selectedMenu: SideMenuId | null;
   onSelectMenu: (menu: SideMenuId) => void;
+  className?: string;
 }) {
   return (
     <aside
       aria-label="사이드 메뉴"
-      className="flex w-14 shrink-0 flex-col items-center border-r border-zinc-200 bg-zinc-50 py-2"
+      className={cn(
+        "hidden w-14 shrink-0 flex-col items-center border-r border-zinc-200 bg-zinc-50 py-2 lg:flex",
+        className,
+      )}
     >
       <Tooltip.Root positioning={{ placement: "right" }}>
         <Tooltip.Trigger
@@ -23,7 +29,7 @@ export function SideMenu({
           onClick={() => onSelectMenu("file-tree")}
           className="flex size-10 cursor-pointer items-center justify-center rounded-lg text-zinc-600 hover:bg-zinc-200 hover:text-zinc-950 focus-visible:outline-2 focus-visible:outline-blue-600 aria-pressed:bg-blue-100 aria-pressed:text-blue-700"
         >
-          <Files size={20} aria-hidden="true" />
+          <FilesIcon size={20} aria-hidden="true" />
         </Tooltip.Trigger>
         <Tooltip.Content>파일 트리</Tooltip.Content>
       </Tooltip.Root>

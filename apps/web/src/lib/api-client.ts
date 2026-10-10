@@ -20,6 +20,16 @@ export function toServerRelativePath(url: string): string {
   return `${target.pathname.slice(server.pathname.length)}${target.search}`
 }
 
+export function toServerAbsoluteUrl(path: string): string {
+  const server = selectedServer()
+  const target = new URL(path, server)
+  if (target.origin !== server.origin || !target.pathname.startsWith(server.pathname)) {
+    throw new Error('선택한 서버의 파일 경로가 아닙니다.')
+  }
+
+  return target.href
+}
+
 export const apiClient = ky.create({
   baseUrl: `${window.location.origin}/`,
   hooks: {

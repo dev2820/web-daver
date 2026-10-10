@@ -1,5 +1,6 @@
 import Markdown, { defaultUrlTransform } from "react-markdown";
 import rehypeKatex from "rehype-katex";
+import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import "katex/dist/katex.min.css";
 import { useSuspenseRawContent } from "@/features/raw-content";
@@ -27,7 +28,7 @@ export function MarkdownContent({ url }: { url: string }) {
     >
       <div style={{ maxWidth: "70ch", width: "100%" }}>
         <RenderMarkdown
-          remarkPlugins={[remarkMath]}
+          remarkPlugins={[remarkGfm, remarkMath]}
           rehypePlugins={[rehypeKatex]}
           urlTransform={(value, key, node) => {
             const safeUrl = defaultUrlTransform(value);

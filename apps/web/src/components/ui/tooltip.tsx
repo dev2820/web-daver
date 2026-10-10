@@ -11,7 +11,7 @@ export function Content({ className, ...props }: ComponentProps<typeof ArkToolti
     <Portal>
       <ArkTooltip.Positioner className="z-50">
         <ArkTooltip.Content
-          className={cn('rounded bg-zinc-900 px-2 py-1 text-xs text-white shadow-sm', className)}
+          className={cn('rounded bg-zinc-900 px-2 py-1 text-xs text-white shadow-sm data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out motion-reduce:animate-none!', className)}
           {...props}
         />
       </ArkTooltip.Positioner>

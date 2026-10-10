@@ -17,6 +17,7 @@ import { MarkdownOrderedList } from "./ol";
 import { MarkdownParagraph } from "./p";
 import { MarkdownPre } from "./pre";
 import { MarkdownStrong } from "./strong";
+import { MarkdownTable } from "./table";
 import { MarkdownUnorderedList } from "./ul";
 
 export const markdownComponents = {
@@ -38,5 +39,6 @@ export const markdownComponents = {
   p: MarkdownParagraph,
   pre: MarkdownPre,
   strong: MarkdownStrong,
+  table: MarkdownTable,
   ul: MarkdownUnorderedList,
 } satisfies Components;

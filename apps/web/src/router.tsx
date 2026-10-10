@@ -5,6 +5,7 @@ import {
   redirect,
 } from "@tanstack/react-router";
 import App from "./App";
+import { workspaceSearchSchema } from "./lib/workspace-search";
 import AuthPage from "./pages/auth-page";
 import HomePage from "./pages/home-page";
 import SettingPage from "./pages/setting-page";
@@ -31,6 +32,7 @@ const authRoute = createRoute({
 const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "home",
+  validateSearch: workspaceSearchSchema,
   component: HomePage,
 });
 

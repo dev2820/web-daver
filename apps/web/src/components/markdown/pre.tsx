@@ -1,9 +1,11 @@
 import { cloneElement, isValidElement, type CSSProperties } from "react";
+import { cn } from "@/lib/utils";
 import type { MarkdownElementProps } from "./types";
 
 export function MarkdownPre({
   node: _node,
   children,
+  className,
   style,
   ...props
 }: MarkdownElementProps<"pre">) {
@@ -16,7 +18,7 @@ export function MarkdownPre({
           backgroundColor: "transparent",
           fontSize: "inherit",
           lineHeight: "inherit",
-          whiteSpace: "pre",
+          whiteSpace: "inherit",
         },
       })
     : children;
@@ -24,10 +26,13 @@ export function MarkdownPre({
   return (
     <pre
       {...props}
+      className={cn(
+        "max-w-full overflow-x-hidden whitespace-pre-wrap wrap-anywhere lg:overflow-x-auto lg:whitespace-pre lg:wrap-normal",
+        className,
+      )}
       style={{
         margin: "0 0 1rem",
         padding: "1rem",
-        overflowX: "auto",
         borderRadius: "0.5rem",
         backgroundColor: "#f4f4f5",
         fontFamily:

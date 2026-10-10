@@ -1,13 +1,27 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   TreeView,
   createTreeCollection,
   type TreeCollection,
 } from "@ark-ui/react/tree-view";
-import { ChevronRight, File, Folder } from "lucide-react";
+import { ChevronRightIcon, FileIcon, FolderIcon } from "lucide-react";
 import { ScrollView } from "@/components/ui";
 import { useFileTree, type FileTreeNode } from "@/features/file-tree";
+import { toDirectoryUrl } from "@/features/file-tree/api";
 import { useServersStore } from "@/stores/servers";
+import { isCurrentServerFile, useWorkspaceStore } from "@/stores/workspace";
+
+function withLoadedChildren(
+  nodes: FileTreeNode[],
+  childrenByUrl: Map<string, FileTreeNode[]>,
+): FileTreeNode[] {
+  return nodes.map((node) => {
+    const children = childrenByUrl.get(node.url);
+    return node.kind === "directory" && children
+      ? { ...node, children: withLoadedChildren(children, childrenByUrl) }
+      : node;
+  });
+}
 
 function Node({
   node,
@@ -24,9 +38,9 @@ function Node({
         <TreeView.Branch>
           <TreeView.BranchControl className="flex min-h-9 cursor-pointer items-center gap-2 rounded-md px-2 text-sm text-zinc-800 hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-blue-600 data-selected:bg-blue-50">
             <TreeView.BranchIndicator className="shrink-0 transition-transform data-[state=open]:rotate-90">
-              <ChevronRight size={14} aria-hidden="true" />
+              <ChevronRightIcon size={14} aria-hidden="true" />
             </TreeView.BranchIndicator>
-            <Folder
+            <FolderIcon
               size={16}
               className="shrink-0 text-zinc-500"
               aria-hidden="true"
@@ -54,7 +68,7 @@ function Node({
           }}
           className="flex min-h-9 cursor-pointer items-center gap-2 rounded-md px-2 pl-7 text-sm text-zinc-800 hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-blue-600 data-selected:bg-blue-50"
         >
-          <File
+          <FileIcon
             size={16}
             className="shrink-0 text-zinc-500"
             aria-hidden="true"
@@ -76,6 +90,8 @@ export function FileTree({
   onOpenFile: (node: FileTreeNode) => void;
 }) {
   const serverUrl = useServersStore((state) => state.currentServerUrl);
+  const treeExpanded = useWorkspaceStore((state) => state.treeExpanded);
+  const setTreeExpanded = useWorkspaceStore((state) => state.setTreeExpanded);
   const { nodes, isPending, isError, error, loadChildren } =
     useFileTree(serverUrl);
   const [loaded, setLoaded] = useState<{
@@ -99,6 +115,54 @@ export function FileTree({
   );
   const collection =
     loaded?.nodes === nodes ? loaded.collection : baseCollection;
+  const expandedValue = useMemo(
+    () =>
+      serverUrl
+        ? treeExpanded.filter(
+            (url) =>
+              url.startsWith(toDirectoryUrl(serverUrl)) &&
+              isCurrentServerFile(url),
+          )
+        : [],
+    [serverUrl, treeExpanded],
+  );
+
+  useEffect(() => {
+    if (expandedValue.length === 0 || nodes.length === 0) return;
+
+    let cancelled = false;
+
+    void Promise.allSettled(expandedValue.map(loadChildren)).then((results) => {
+      if (cancelled) return;
+
+      const childrenByUrl = new Map<string, FileTreeNode[]>();
+      results.forEach((result, index) => {
+        if (result.status === "fulfilled") {
+          childrenByUrl.set(expandedValue[index], result.value);
+        } else {
+          setLoadError(
+            result.reason instanceof Error
+              ? result.reason.message
+              : "폴더를 불러오지 못했습니다.",
+          );
+        }
+      });
+
+      setLoaded({
+        nodes,
+        collection: createTreeCollection<FileTreeNode>({
+          rootNode: {
+            ...baseCollection.rootNode,
+            children: withLoadedChildren(nodes, childrenByUrl),
+          },
+        }),
+      });
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [baseCollection, expandedValue, loadChildren, nodes]);
 
   return (
     <ScrollView className="h-full bg-white">
@@ -118,6 +182,10 @@ export function FileTree({
             key={serverUrl}
             collection={collection}
             selectedValue={activeFileUrl ? [activeFileUrl] : []}
+            expandedValue={expandedValue}
+            onExpandedChange={({ expandedValue }) =>
+              setTreeExpanded(expandedValue)
+            }
             loadChildren={({ node }) => {
               setLoadError(null);
               return loadChildren(node.url);
