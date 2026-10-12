@@ -11,7 +11,7 @@ function App() {
   if (!currentServerUrl) return <Navigate to="/auth" replace />;
 
   return (
-    <div className="min-h-dvh bg-white text-zinc-950">
+    <div className="min-h-dvh bg-white text-zinc-950 w-full">
       <div className="px-6 md:px-10">
         <Outlet />
       </div>
