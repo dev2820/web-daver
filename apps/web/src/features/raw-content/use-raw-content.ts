@@ -10,7 +10,7 @@ const markdownQueries = {
     queryOptions({
       queryKey: ["editor", "raw", url] as const,
       queryFn: ({ signal }) =>
-        apiClient.get(toServerRelativePath(url), { signal, retry: 0 }).text(),
+        apiClient(toServerRelativePath(url), { signal, retry: 0 }).text(),
       staleTime: 60_000,
       retry: false,
     }),

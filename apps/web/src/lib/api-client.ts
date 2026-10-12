@@ -1,4 +1,4 @@
-import ky from 'ky'
+import ky, { type Options } from 'ky'
 import { useServersStore } from '@/stores/servers'
 
 function selectedServer(): URL {
@@ -30,16 +30,6 @@ export function toServerAbsoluteUrl(path: string): string {
   return target.href
 }
 
-export const apiClient = ky.create({
-  baseUrl: `${window.location.origin}/`,
-  hooks: {
-    beforeRequest: [
-      ({ request }) => {
-        const server = selectedServer()
-        const path = new URL(request.url)
-        const url = new URL(`${path.pathname.slice(1)}${path.search}`, server)
-        return new Request(url, request)
-      },
-    ],
-  },
-})
+export function apiClient(path: string, options?: Options) {
+  return ky(path, { ...options, baseUrl: selectedServer().href })
+}

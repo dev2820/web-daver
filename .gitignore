@@ -2,3 +2,6 @@ node_modules
 dist
 *.tsbuildinfo
 .DS_Store
+apps/mobile/.env
+apps/mobile/.env.local
+apps/mobile/.expo
