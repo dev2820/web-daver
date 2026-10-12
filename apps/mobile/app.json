@@ -13,6 +13,9 @@
         }
       }
     },
+    "android": {
+      "package": "com.dev2820.daver"
+    },
     "plugins": [
       [
         "expo-build-properties",
@@ -22,6 +25,12 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "fa1b299f-3f4c-4d4d-a100-e9197cffc754"
+      }
+    },
+    "owner": "dev2820"
   }
 }
