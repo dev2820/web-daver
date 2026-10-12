@@ -14,6 +14,7 @@ export default function EmbeddedApp(_props: {
   dom?: {
     useExpoDOMWebView?: boolean;
     domStorageEnabled?: boolean;
+    injectedJavaScriptBeforeContentLoaded?: string;
     style?: { flex: number };
   };
 }) {

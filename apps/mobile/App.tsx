@@ -6,7 +6,13 @@ export default function App() {
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
         <EmbeddedApp
-          dom={{ useExpoDOMWebView: false, domStorageEnabled: true, style: { flex: 1 } }}
+          dom={{
+            useExpoDOMWebView: false,
+            domStorageEnabled: true,
+            // Install the Expo DOM bridge before the HTML bootstrap runs on Android.
+            injectedJavaScriptBeforeContentLoaded: "true;",
+            style: { flex: 1 },
+          }}
         />
       </SafeAreaView>
     </SafeAreaProvider>
