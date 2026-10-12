@@ -20,21 +20,15 @@ pnpm dev
 
 ## 모바일 앱
 
-`apps/mobile`은 Expo 앱입니다. WebView에서 `apps/web`의 배포 주소나 개발 서버 주소를 엽니다.
+`apps/mobile`은 Expo 앱입니다. `apps/web`의 화면과 CSS를 빌드할 때 APK에 포함하고, 앱 안의 WebView에서 엽니다. 웹 프런트엔드의 배포 주소는 필요하지 않습니다.
 
 ```bash
 pnpm install
-pnpm --filter web dev --host 0.0.0.0
-```
-
-다른 터미널에서 모바일 앱을 실행합니다. `EXPO_PUBLIC_WEB_URL`을 설정하지 않으면 앱에서 웹 주소를 입력할 수 있습니다. 입력한 주소는 기기에 저장되어 다음 실행에도 사용됩니다. `.env.example`을 `.env`로 복사해 `EXPO_PUBLIC_WEB_URL`을 설정하면 기본 주소로 사용합니다.
-
-```bash
 pnpm --filter mobile start
 ```
 
-실기기는 컴퓨터와 같은 네트워크에 연결하고 컴퓨터의 LAN IP를 사용합니다. Android 에뮬레이터에서는 `http://10.0.2.2:5173`, iOS 시뮬레이터에서는 `http://localhost:5173`을 사용할 수 있습니다. 개발 서버는 실행 중이어야 합니다. Tailscale 전용 주소를 사용하려면 Android 기기도 같은 tailnet에 연결해야 합니다.
+Expo 개발 서버는 개발할 때만 필요합니다. 설치된 APK는 웹 화면을 오프라인에서도 열 수 있습니다. 파일을 조회하거나 수정하려면 앱의 로그인 화면에 WebDAV 서버 주소를 입력하고, 기기에서 그 서버에 연결할 수 있어야 합니다. Tailscale 전용 WebDAV 서버라면 실기기에도 Tailscale을 설치하고 같은 tailnet에 연결해야 합니다. 서버는 WebView의 `file://` 출처에서 보내는 요청도 허용해야 합니다.
 
-설치 가능한 Android APK는 `apps/mobile`에서 `eas build --platform android --profile preview`로 빌드합니다. APK를 실행하면 웹 주소를 입력할 수 있습니다.
+설치 가능한 Android APK는 `apps/mobile`에서 `eas build --platform android --profile preview`로 빌드합니다.
 
-웹 주소는 모바일 앱의 AsyncStorage에 저장됩니다. 웹의 Zustand 서버 목록(`daver-servers`)은 WebView의 `localStorage`에 저장됩니다. 같은 앱과 웹 출처를 다시 열면 복원됩니다. 외부 브라우저의 저장소나 모바일 네이티브 저장소와는 공유되지 않습니다. 작업 공간 상태는 `/home` URL의 검색 파라미터에 있으므로 URL 이동 중에는 유지되지만 앱을 새로 실행하면 초기 URL에서 시작합니다. TanStack Query의 API 데이터는 메모리 캐시여서 앱을 다시 실행하면 새로 가져옵니다. WebView의 HTTP 캐시는 브라우저 캐시 정책을 따르며 오프라인 사용을 보장하지 않습니다. 웹 출처를 바꾸거나 앱 데이터를 삭제하면 저장된 서버 목록도 사용할 수 없습니다.
+웹의 Zustand 서버 목록(`daver-servers`)은 앱 안 WebView의 `localStorage`에 저장됩니다. 앱을 다시 열면 같은 WebView 저장소에서 복원되며, 외부 브라우저나 React Native 상태와는 공유되지 않습니다. 작업 공간 상태는 해시 URL의 검색 파라미터에 있으므로 화면 이동 중에는 유지되지만 앱을 새로 실행하면 초기 URL에서 시작합니다. TanStack Query의 API 데이터는 메모리 캐시여서 앱을 다시 실행하면 새로 가져옵니다. 앱 데이터를 삭제하면 저장된 서버 목록도 삭제됩니다.

@@ -3,6 +3,7 @@ import {
   createRoute,
   createRouter,
   redirect,
+  type RouterHistory,
 } from "@tanstack/react-router";
 import App from "./App";
 import { workspaceSearchSchema } from "./lib/workspace-search";
@@ -49,7 +50,10 @@ const routeTree = rootRoute.addChildren([
   settingRoute,
 ]);
 
-export const router = createRouter({ routeTree });
+export const createAppRouter = (history?: RouterHistory) =>
+  createRouter({ routeTree, history });
+
+export const router = createAppRouter();
 
 declare module "@tanstack/react-router" {
   interface Register {
