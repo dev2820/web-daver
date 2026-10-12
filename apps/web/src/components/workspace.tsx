@@ -119,7 +119,9 @@ export function Workspace() {
       <Portal>
         <Drawer.Backdrop className="inset-0 lg:hidden" />
         <Drawer.Positioner className="inset-0 lg:hidden">
-          <Drawer.Content className="w-[min(92vw,24rem)] flex-row pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+          <Drawer.Content
+            className="w-[min(92vw,24rem)] flex-row pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] transform-[translate3d(min(0px,var(--drawer-translate-x,0px)),var(--drawer-translate-y,0px),0)]!"
+          >
             <SideMenu
               className="flex"
               selectedMenu="file-tree"
